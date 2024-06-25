@@ -52,8 +52,7 @@ class Baza:
         if not os.path.exists(self.database):
             self.kreiranjeBaze()
             self.dodavanjeKorisnika(username, password)
-            
-        self.dodavanjeKorisnika(username, password)
+        
+        else:
+            self.dodavanjeKorisnika(username, password)
                      
-if __name__ =='__main__':
-    Baza().noviKorisnik('mico', '145')
