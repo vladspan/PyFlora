@@ -48,13 +48,20 @@ class UnosKorisnika:
         if not userName or not sifra:
             self.errorMessage.config(text='Error: Username and Password cannot be empty')
             self.errorMessage.after(3000, lambda: self.errorMessage.config(text=''))
-
+               
         else:
             self.errorMessage.config(text='')
             print(f'Username: {userName}, Password: {sifra}')
-        
-        Baza().noviKorisnik(userName,sifra) 
-        
+            Baza().noviKorisnik(userName,sifra)
+
+            self.tkinterBaza.after(3000, self.clearEntries)
+            self.errorMessage.config(text=f'Sing up successful!\nWelcome {userName.upper()}', foreground='green')
+            self.errorMessage.after(3000, lambda: self.errorMessage.config(text='', foreground='red'))
+    
+    def clearEntries(self):
+        self.name.set('')
+        self.sifra.set('')
+              
 
 if __name__ == '__main__':
     UnosKorisnika()
