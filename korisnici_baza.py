@@ -1,58 +1,54 @@
 import sqlite3
-import os
-
-class Baza:       
+class Baza:
     def __init__(self):
         self.database = 'BazaKorisnika.db'
-        self.query = '''CREATE TABLE IF NOT EXISTS Korisnici
+        self.query_create_table = '''CREATE TABLE IF NOT EXISTS Korisnici
         (
             id INTEGER PRIMARY KEY,
-            username TEXT,
+            username TEXT UNIQUE,
             password TEXT 
-            )
-            '''
-        self.query_add = '''INSERT INTO Korisnici
-                (username, password)
-                VALUES(?, ?)
-                '''
-        
-    def kreiranjeBaze(self):          
-            try:
-                connection = sqlite3.connect(self.database)
-                cursor = connection.cursor()
+        )'''
+        self.query_add = '''INSERT INTO Korisnici (username, password) VALUES(?, ?)'''
+        self.query_select = '''SELECT username, password FROM Korisnici'''
+        self.createTable()
 
-                cursor.execute(self.query)
-                connection.commit()
+    def createTable(self):
+        try:
+            connection = sqlite3.connect(self.database)
+            cursor = connection.cursor()
+            cursor.execute(self.query_create_table)
+            connection.commit()
+            cursor.close()
+            print("Table 'Korisnici' created or already exists.")
+        except sqlite3.Error as e:
+            print('Error creating database:', e)
+        finally:
+            connection.close()
 
-                cursor.close()
-        
-            except sqlite3.Error as e:
-                print('Dogodila se greška', e)
-            
-            finally:
-                connection.close()
-        
-    def dodavanjeKorisnika(self, username, password):           
-            try: 
-                connection = sqlite3.connect(self.database)
-                cursor = connection.cursor()
+    def dodavanjeKorisnika(self, username, password):
+        try:
+            connection = sqlite3.connect(self.database)
+            cursor = connection.cursor()
+            cursor.execute(self.query_add, (username, password))
+            connection.commit()
+            cursor.close()
+            print(f'User {username} added successfully')  # Debug print
+        except sqlite3.Error as e:
+            print('Error adding user:', e)
+        finally:
+            connection.close()
 
-                cursor.execute(self.query_add, (username, password))
-                connection.commit()
-                          
-                cursor.close()
-
-            except sqlite3.Error as e:
-                print('Dogodila se greška prilikom dodavanja korisnika', e)
-
-            finally:
-                connection.close()
-        
-    def noviKorisnik(self, username, password):
-        if not os.path.exists(self.database):
-            self.kreiranjeBaze()
-            self.dodavanjeKorisnika(username, password)
-        
-        else:
-            self.dodavanjeKorisnika(username, password)
-                     
+    def pretrazivanjeKorisnika(self):
+        userNameData = []
+        try:
+            connection = sqlite3.connect(self.database)
+            cursor = connection.cursor()
+            cursor.execute(self.query_select)
+            userNameData = cursor.fetchall()
+            cursor.close()
+            print('Users fetched successfully:', userNameData)  # Debug print
+        except sqlite3.Error as e:
+            print("Error fetching users:", e)
+        finally:
+            connection.close()
+        return userNameData
