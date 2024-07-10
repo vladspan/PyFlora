@@ -1,20 +1,20 @@
 from tkinter import *
 from korisnici_baza import *
-from PyProfil import*
+from PyProfil import *
 
 class UnosKorisnika:
-    def __init__(self):
+    def __init__(self, root):
         self.baza = Baza()
         self.baza.createTable()
         self.refreshUserBaza()
-        self.tkinterBaza = Tk()
-        self.tkinterBaza.geometry('600x400')
-        self.tkinterBaza.title('PyFlora')
+        self.root = root
+        self.root.geometry('600x400')
+        self.root.title('PyFlora')
 
         self.name = StringVar()
         self.sifra = StringVar()
 
-        self.okvir = Frame(self.tkinterBaza)
+        self.okvir = Frame(self.root)
         self.okvir.pack(pady=50)
 
         self.naslov = Label(self.okvir, text='PyFlora', foreground='orange', font=('Helvetica', 24, 'normal', 'roman'))
@@ -44,8 +44,6 @@ class UnosKorisnika:
         self.errorMessage = Label(self.okvir, text='', foreground='red', font=('Helvetica', 12, 'normal', 'roman'))
         self.errorMessage.grid(row=5, columnspan=2, pady=10)
 
-        self.okvir.mainloop()
-
     def refreshUserBaza(self):
         self.userBaza = self.baza.pretrazivanjeKorisnika()
         print(f'refreshUserBaza: {self.userBaza}')  # Debug print
@@ -65,13 +63,13 @@ class UnosKorisnika:
             if any(len(user) > 0 and user[0] == userName for user in self.userBaza):
                 self.errorMessage.config(text="Username exists. Please try another username.")
                 self.errorMessage.after(3000, lambda: self.errorMessage.config(text=''))
-                self.tkinterBaza.after(3000, self.clearEntries)
+                self.root.after(3000, self.clearEntries)
             else: 
                 self.baza.dodavanjeKorisnika(userName, sifra)
                 self.refreshUserBaza()
                 self.errorMessage.config(text=f'Sign up successful!\nWelcome {userName.upper()}', foreground='green')
                 self.errorMessage.after(3000, lambda: self.errorMessage.config(text='', foreground='red'))
-                self.tkinterBaza.after(3000, self.clearEntries)
+                self.root.after(3000, self.clearEntries)
 
     def userSignIn(self):
         self.refreshUserBaza()
@@ -82,8 +80,8 @@ class UnosKorisnika:
 
         if any(len(user) > 1 and user[0] == userName and user[1] == sifra for user in self.userBaza):
             print(f'Login successful for user: {userName}')  # Debug print
-            PyProfil()
-          
+            self.okvir.pack_forget()  # Hide the login frame
+            PyProfil(self.root)
         else:
             self.errorMessage.config(text='Invalid username or password')
             self.errorMessage.after(3000, lambda: self.errorMessage.config(text=''))
@@ -94,4 +92,6 @@ class UnosKorisnika:
         self.sifra.set('')
 
 if __name__ == '__main__':
-    UnosKorisnika()
+    root = Tk()
+    UnosKorisnika(root)
+    root.mainloop()
