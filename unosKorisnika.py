@@ -35,7 +35,7 @@ class UnosKorisnika:
         self.unosPassword = Entry(self.okvir, textvariable=self.sifra, show='*')
         self.unosPassword.grid(row=3, column=1)
 
-        self.buttonUser = Button(self.okvir, text='Sign up', command=self.userLogin)
+        self.buttonUser = Button(self.okvir, text='Sign up', command=self.userSignUp)
         self.buttonUser.grid(row=4, column=0)
 
         self.buttonUserLogin = Button(self.okvir, text='Sign in', command=self.userSignIn)
@@ -50,7 +50,7 @@ class UnosKorisnika:
         self.userBaza = self.baza.pretrazivanjeKorisnika()
         print(f'refreshUserBaza: {self.userBaza}')  # Debug print
 
-    def userLogin(self):
+    def userSignUp(self):
         self.refreshUserBaza()
         userName = self.name.get()
         sifra = self.sifra.get()
