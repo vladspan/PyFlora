@@ -11,6 +11,7 @@ class PyProfil():
         self.okvirniDio.pack(pady=50)
         
         plantData = BazaBilja().pretrazivanjeBiljke()
+        self.images = []
 
         rowP = 0
 
@@ -36,12 +37,12 @@ class PyProfil():
         description_label.grid(row=r+1, column=0, columnspan=1, sticky="nsew")
 
         spacer_label = Label(self.okvirniDio, text='')
-        spacer_label.grid(column=1, columnspan=2, rowspan=2)
+        spacer_label.grid(column=1, rowspan=2)
         
-        self.fotka = PhotoImage(file=p[2])
-        image_label = Label(self.okvirniDio, image=self.fotka)
-        image_label.image = self.fotka  # Keep a reference to avoid garbage collection
-        image_label.grid(row=r, column=3, rowspan=2, sticky="nsew")
+        image = PhotoImage(file=p[2])
+        self.images.append(image)  # Keep a reference to the image
+        image_label = Label(self.okvirniDio, image=image)
+        image_label.grid(row=r, column=2, rowspan=2, sticky="nsew")
 
         height_spacer = Label(self.okvirniDio, text='')
         height_spacer.grid(row=r+2, rowspan=4, columnspan=3)
