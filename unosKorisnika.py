@@ -1,6 +1,6 @@
 from tkinter import *
 from korisnici_baza import *
-from PyPosuda import *
+from PyProfil import*
 
 class UnosKorisnika:
     def __init__(self):
@@ -82,12 +82,13 @@ class UnosKorisnika:
 
         if any(len(user) > 1 and user[0] == userName and user[1] == sifra for user in self.userBaza):
             print(f'Login successful for user: {userName}')  # Debug print
-            Posuda()
+            PyProfil()
+          
         else:
             self.errorMessage.config(text='Invalid username or password')
             self.errorMessage.after(3000, lambda: self.errorMessage.config(text=''))
             print(f'Login failed for user: {userName}')  # Debug print
-
+            
     def clearEntries(self):
         self.name.set('')
         self.sifra.set('')
