@@ -1,61 +1,59 @@
 from tkinter import *
-from biljke_baza import *
+from biljke_baza import BazaBilja
 from PyBiljka import Biljka
-import os
 
-class PyProfil():
-    def __init__(self, root):
-        self.bazniDio = Toplevel(root)
-        self.bazniDio.geometry('800x800')
-        self.okvirniDio = Frame(self.bazniDio)
-        self.okvirniDio.pack(pady=50)
-        
-        plantData = BazaBilja().pretrazivanjeBiljke()
-        
-        self.images = []  # List to keep references to PhotoImage objects
-        
-        rowP = 0
+class PyProfil:
+    def __init__(self, root, username):
+        self.root = root
+        self.username = username
+        self.baza = BazaBilja(username)
+        self.root.title('PyFlora - Profil')
 
-        for biljka in plantData:
-            self.scr(rowP, biljka)
-            rowP += 2  # Each plant takes two rows
+        self.frame = Frame(self.root)
+        self.frame.pack(pady=20)
 
-        self.addButton = Button(self.bazniDio, text='+', command=self.dodavanjeBiljke)
-        self.addButton.pack(ipadx=20, ipady=20)
-            
-    def dodavanjeBiljke(self):
-        Biljka().biljkaProzor(self.bazniDio)
+        self.label = Label(self.frame, text=f'Welcome, {username}', font=('Helvetica', 20))
+        self.label.pack(pady=10)
 
-    def scr(self, r, p):
-        name_label = Label(self.okvirniDio, text=f'{p[0]}', foreground="grey", 
-              background="orange", borderwidth=2, relief="groove", 
-              padx=10, pady=10, anchor="center")
-        name_label.grid(row=r, column=0, columnspan=1, sticky="nsew")
-        
-        description_label = Label(self.okvirniDio, text=f'{p[1]}')
-        description_label.grid(row=r+1, column=0, columnspan=1, sticky="nsew")
+        self.plantsFrame = Frame(self.frame)
+        self.plantsFrame.pack(pady=20)
 
-        spacer_label = Label(self.okvirniDio, text='')
-        spacer_label.grid(row=r, column=1, rowspan=2)
-        
-        # Verify if the image path is correct
-        image_path = p[2]
-        if not os.path.isfile(image_path):
-            print(f"Image file does not exist: {image_path}")
-            placeholder_image = PhotoImage(width=100, height=100)
-            self.images.append(placeholder_image)  # Keep a reference to the placeholder image
-            image_label = Label(self.okvirniDio, image=placeholder_image)
-        else:
-            plant_image = PhotoImage(file=image_path)
-            self.images.append(plant_image)  # Keep a reference to the image
-            image_label = Label(self.okvirniDio, image=plant_image)
-        
-        image_label.grid(row=r, column=2, rowspan=2, sticky="nsew")
+        self.addButton = Button(self.frame, text='+', command=self.addPlant)
+        self.addButton.pack(pady=10)
 
-        height_spacer = Label(self.okvirniDio, text='')
-        height_spacer.grid(row=r+2, column=0, columnspan=3)
+        self.displayPlants()
 
-if __name__ == '__main__':
-    root = Tk()
-    PyProfil(root)
-    root.mainloop()
+    def displayPlants(self):
+        for widget in self.plantsFrame.winfo_children():
+            widget.destroy()
+
+        plants = self.baza.pretrazivanjeBiljke()
+        for plant in plants:
+            plantFrame = Frame(self.plantsFrame)
+            plantFrame.pack(fill='x', pady=5)
+
+            textFrame = Frame(plantFrame)
+            textFrame.pack(side=LEFT, fill='both', expand=True)
+
+            nameLabel = Label(textFrame, text=plant[0], font=('Helvetica', 16, 'bold'))
+            nameLabel.pack(anchor='w')
+
+            descLabel = Label(textFrame, text=plant[1], font=('Helvetica', 12))
+            descLabel.pack(anchor='w')
+
+            try:
+                img = PhotoImage(file=plant[2])
+                imageLabel = Label(plantFrame, image=img)
+                imageLabel.image = img  # Keep a reference to avoid garbage collection
+                imageLabel.pack(side=RIGHT, padx=10)
+            except Exception as e:
+                print(f"Error loading image {plant[2]}: {e}")
+
+    def addPlant(self):
+        biljka = Biljka(self.username)
+        biljka.biljkaProzor(self.root)
+        self.displayPlants()
+
+    def editPlant(self):
+
+        pass

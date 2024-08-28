@@ -1,10 +1,7 @@
-from tkinter import Tk
+from tkinter import *
 from unosKorisnika import UnosKorisnika
 
-def main():
+if __name__ == '__main__':
     root = Tk()
     app = UnosKorisnika(root)
     root.mainloop()
-
-if __name__ == '__main__':
-    main()
