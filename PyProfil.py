@@ -23,6 +23,32 @@ class PyProfil:
 
         self.displayPlants()
 
+
+    def cretaeWidgets(self):
+        
+        #Frame for plan entries
+        self.plantsFrame = Frame(self.root)
+        self.plantsFrame.pack(pady=20)
+
+        #Button to add a new plant
+        self.addPlantButton = Button(self.root, text='+', command= self.addPlant)
+        self.addPlantButton.pack(pady=10)
+
+        #Button to edit the selecetd plant
+        self.editPlantButton = Button(self.root, text='Edit', command=self.editPlant)
+        self.editPlantButton.pack(pady=10)
+
+        #Listbox to display plants
+        self.plantListBox = Listbox(self.plantsFrame)
+        self.plantListBox.pack(side=LEFT, fill=BOTH, expand=True )
+
+        #Scrollbar for the listbox
+        self.scrollbar = Scrollbar(self.plantsFrame, orient=VERTICAL)
+        self.scrollbar.config(command=self.plantListBox.yview)
+        self.scrollbar.pack(side=RIGHT,fill=Y)
+        self.plantListBox.config(yscrollcommand=self.scrollbar.set)
+
+
     def displayPlants(self):
         for widget in self.plantsFrame.winfo_children():
             widget.destroy()
@@ -55,5 +81,6 @@ class PyProfil:
         self.displayPlants()
 
     def editPlant(self):
+
 
         pass
