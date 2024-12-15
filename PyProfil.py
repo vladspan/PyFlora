@@ -4,23 +4,18 @@ from PyBiljka import Biljka
 
 class PyProfil:
     def __init__(self, root, username):
-        self.root = root
-        self.username = username
-        self.baza = BazaBilja(username)
+
+        self.root = root 
         self.root.title('PyFlora - Profil')
+        self.username = username
 
-        self.frame = Frame(self.root)
-        self.frame.pack(pady=20)
+        #Initialiaze the database coonection
+        self.baza = BazaBilja(self.username)
 
-        self.label = Label(self.frame, text=f'Welcome, {username}', font=('Helvetica', 20))
-        self.label.pack(pady=10)
+        #Create GUI components
+        self.cretaeWidgets()
 
-        self.plantsFrame = Frame(self.frame)
-        self.plantsFrame.pack(pady=20)
-
-        self.addButton = Button(self.frame, text='+', command=self.addPlant)
-        self.addButton.pack(pady=10)
-
+        #Display the plants in the user's profile
         self.displayPlants()
 
 
@@ -50,37 +45,39 @@ class PyProfil:
 
 
     def displayPlants(self):
-        for widget in self.plantsFrame.winfo_children():
-            widget.destroy()
+        
+        self.plantListBox.delete(0,END)
 
         plants = self.baza.pretrazivanjeBiljke()
         for plant in plants:
-            plantFrame = Frame(self.plantsFrame)
-            plantFrame.pack(fill='x', pady=5)
-
-            textFrame = Frame(plantFrame)
-            textFrame.pack(side=LEFT, fill='both', expand=True)
-
-            nameLabel = Label(textFrame, text=plant[0], font=('Helvetica', 16, 'bold'))
-            nameLabel.pack(anchor='w')
-
-            descLabel = Label(textFrame, text=plant[1], font=('Helvetica', 12))
-            descLabel.pack(anchor='w')
-
-            try:
-                img = PhotoImage(file=plant[2])
-                imageLabel = Label(plantFrame, image=img)
-                imageLabel.image = img  # Keep a reference to avoid garbage collection
-                imageLabel.pack(side=RIGHT, padx=10)
-            except Exception as e:
-                print(f"Error loading image {plant[2]}: {e}")
+            displayText = f'{plant[0]}: {plant[1]}'
+            self.plantListBox.insert(END, displayText)
+            
 
     def addPlant(self):
-        biljka = Biljka(self.username)
-        biljka.biljkaProzor(self.root)
-        self.displayPlants()
+        #Open a window to add a plant
+        self.newPlantWindow = Toplevel(self.root)
+        Biljka().biljkaProzor(self.newPlantWindow)
 
     def editPlant(self):
+        #Get the selected plant
+        selectedIndex = self.plantListBox.curselection()
+        if not selectedIndex:
+            self.messagebox.showerror("Error", "Please select a plant to edit.")
+            return
+        
+        selectedText = self.plantListBox.get(selectedIndex)
+        plantName = selectedText.split(':')[0]
+
+        #Retrive the plant details from the database
+        plantData = self.baza.dohvatiBiljkuImenom(plantName.strip())
+
+        if plantData:
+            #Opent the plant edit window with pre-filled data
+            self.editPlantWindow = Toplevel(self.root)
+            Biljka().biljkaProzor(self.editPlantWindow, plantData)
+
+    def refreshPlants(self):
+        self.displayPlants()
 
 
-        pass

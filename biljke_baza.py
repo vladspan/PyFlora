@@ -5,6 +5,8 @@ class BazaBilja:
         self.userName = userName
         self.database = 'plants.db'
         self.createTables()
+        self.connection = sqlite3.connect(self.database)
+        self.cursor = self.connection.cursor()
 
     def createTables(self):
         connection = sqlite3.connect(self.database)
@@ -71,3 +73,15 @@ class BazaBilja:
         cursor.close()
         connection.close()
         return plants
+    
+    def dohvatiBiljkuImenom(self, name):
+        self.cursor.execute('SELECT* FFROM plants WHERE naziv=?', (name, ))
+        self.cursor.fetchone()
+
+    def updateBiljke(self, plantId, naziv, opis, slika):
+        self.cursor.execute('UPDATE plants SET naziv=?, opis=?, slika=? WHERE id=?',(plantId, naziv, opis, slika))
+        self.connection.commit()
+
+    def close(self):
+        self.connection.close()
+
