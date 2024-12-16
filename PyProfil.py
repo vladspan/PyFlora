@@ -5,6 +5,8 @@ from PyBiljka import Biljka
 
 class PyProfil:
     def __init__(self, root, username):
+        from main import center_window
+        center_window(root)
         self.root = root
         self.username = username
         self.baza = BazaBilja(self.username)

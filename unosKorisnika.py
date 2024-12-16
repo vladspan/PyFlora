@@ -5,6 +5,8 @@ from PyProfil import PyProfil
 
 class UnosKorisnika:
     def __init__(self, root):
+        from main import center_window
+        center_window(root)
         self.root = root
         self.root.title('PyFlora - Login')
 
