@@ -10,6 +10,11 @@ class PyProfil:
         self.baza = BazaBilja(self.username)
 
         self.root.title(f'PyProfil - {self.username}')
+
+        # Add a Logout button in the upper-right corner
+        logout_button = Button(self.root, text='Logout', command=self.logout, fg='red')
+        logout_button.pack(anchor='ne', padx=10, pady=10)
+
         self.listbox = Listbox(self.root, width=50)
         self.listbox.pack(pady=20)
 
@@ -36,7 +41,7 @@ class PyProfil:
         if not selected_index:
             messagebox.showerror('Error', 'Please select a plant to edit')
             return
-
+        
         selected_name = self.listbox.get(selected_index)
         plants = self.baza.pretrazivanjeBiljke()
         for plant in plants:
@@ -44,5 +49,16 @@ class PyProfil:
                 biljka = Biljka(self.username)
                 biljka.biljkaProzor(self.root, plantData=plant, refresh_callback=self.refreshList)
                 break
+
+    def logout(self):
+        """Handle the logout action."""
+        self.root.destroy()
+        from unosKorisnika import UnosKorisnika  # Avoid circular import
+        main_root = Tk()
+        UnosKorisnika(main_root)
+        main_root.mainloop()
+        
+    
+
 
 

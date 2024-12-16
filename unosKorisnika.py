@@ -28,10 +28,10 @@ class UnosKorisnika:
         baza = BazaBilja(username)
 
         if baza.provjeraKorisnika(username, password):
-            self.root.destroy()
-            root = Tk()
-            PyProfil(root, username)
-            root.mainloop()
+            self.root.title(f'PyProfil - {username}')
+            for widget in self.root.winfo_children():
+                widget.destroy()  # Clear the login screen
+            PyProfil(self.root, username)  # Pass the same root to PyProfil
         else:
             messagebox.showerror('Error', 'Invalid credentials')
 
