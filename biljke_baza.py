@@ -1,16 +1,21 @@
+from tkinter import *
+from tkinter import messagebox
 import sqlite3
+
 
 class BazaBilja:
     def __init__(self, userName):
         self.userName = userName
         self.database = 'plants.db'
         self.createTables()
+        self.connection = sqlite3.connect(self.database)
+        self.cursor = self.connection.cursor()
 
     def createTables(self):
         connection = sqlite3.connect(self.database)
         cursor = connection.cursor()
 
-        # Create users table if it doesn't exist
+        # Create users table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS users (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -19,7 +24,7 @@ class BazaBilja:
             )
         ''')
 
-        # Create plants table if it doesn't exist
+        # Create plants table
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS plants (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,39 +40,34 @@ class BazaBilja:
 
     def dodavanjeKorisnika(self, username, password):
         try:
-            connection = sqlite3.connect(self.database)
-            cursor = connection.cursor()
-            cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
-            connection.commit()
-            cursor.close()
-            print(f'User {username} added successfully')
+            self.cursor.execute('INSERT INTO users (username, password) VALUES (?, ?)', (username, password))
+            self.connection.commit()
         except sqlite3.Error as e:
             print('Error adding user:', e)
-        finally:
-            connection.close()
 
     def provjeraKorisnika(self, username, password):
-        connection = sqlite3.connect(self.database)
-        cursor = connection.cursor()
-        cursor.execute('SELECT * FROM users WHERE username=? AND password=?', (username, password))
-        user = cursor.fetchone()
-        cursor.close()
-        connection.close()
-        return user
+        self.cursor.execute('SELECT * FROM users WHERE username=? AND password=?', (username, password))
+        return self.cursor.fetchone()
 
     def dodavanjeBiljke(self, ime, opis, slika):
-        connection = sqlite3.connect(self.database)
-        cursor = connection.cursor()
-        cursor.execute('INSERT INTO plants (username, plant_name, plant_description, plant_image) VALUES (?, ?, ?, ?)',
-                       (self.userName, ime, opis, slika))
-        connection.commit()
-        cursor.close()
+        self.cursor.execute(
+            'INSERT INTO plants (username, plant_name, plant_description, plant_image) VALUES (?, ?, ?, ?)',
+            (self.userName, ime, opis, slika)
+        )
+        self.connection.commit()
 
     def pretrazivanjeBiljke(self):
-        connection = sqlite3.connect(self.database)
-        cursor = connection.cursor()
-        cursor.execute('SELECT plant_name, plant_description, plant_image FROM plants WHERE username=?', (self.userName,))
-        plants = cursor.fetchall()
-        cursor.close()
-        connection.close()
-        return plants
+        self.cursor.execute("SELECT * FROM plants WHERE username=?", (self.userName,))
+        return self.cursor.fetchall()
+
+    def updateBiljke(self, plantId, naziv, opis, slika):
+        self.cursor.execute(
+            'UPDATE plants SET plant_name=?, plant_description=?, plant_image=? WHERE id=?',
+            (naziv, opis, slika, plantId)
+        )
+        self.connection.commit()
+
+    def close(self):
+        self.connection.close()
+
+
