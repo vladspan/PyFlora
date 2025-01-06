@@ -5,8 +5,6 @@ from PyBiljka import Biljka
 
 class PyProfil:
     def __init__(self, root, username):
-        from main import center_window
-        center_window(root)
         self.root = root
         self.username = username
         self.baza = BazaBilja(self.username)
@@ -23,7 +21,8 @@ class PyProfil:
         Button(self.root, text='+', command=self.addPlant).pack(pady=5)
         Button(self.root, text='Edit', command=self.editPlant).pack(pady=5)
 
-        self.refreshList()
+        self.refreshList()  # Populate the list
+        self.listbox.focus_set()  # Ensure the listbox gains focus
 
     def refreshList(self):
         """Refresh the Listbox with plant names."""
@@ -43,7 +42,7 @@ class PyProfil:
         if not selected_index:
             messagebox.showerror('Error', 'Please select a plant to edit')
             return
-        
+
         selected_name = self.listbox.get(selected_index)
         plants = self.baza.pretrazivanjeBiljke()
         for plant in plants:

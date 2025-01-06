@@ -38,8 +38,16 @@ class UnosKorisnika:
             messagebox.showerror('Error', 'Invalid credentials')
 
     def signup(self):
-        username = self.username.get()
-        password = self.password.get()
-        baza = BazaBilja(username)
-        baza.dodavanjeKorisnika(username, password)
-        messagebox.showinfo('Success', 'User signed up successfully')
+        username = self.username.get().strip()
+        password = self.password.get().strip()
+
+        if not username or not password:
+            messagebox.showerror('Error','Username or password cannot be empty!')  
+        else:
+            username = self.username.get()
+            password = self.password.get()
+            baza = BazaBilja(username)
+            baza.dodavanjeKorisnika(username, password)
+            messagebox.showinfo('Success', 'User signed up successfully') 
+            
+            
